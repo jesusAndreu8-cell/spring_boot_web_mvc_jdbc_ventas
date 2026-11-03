@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Comerciales</title>
+    <style>
+        #contenedora {
+            margin: 0 auto;
+            width: 95%;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 0.7rem 0.6rem;
+            border-bottom: 1px solid #ccd4da;
+            text-align: left;
+        }
+
+        th {
+            background: #e9eef2;
+        }
+
+        .comerciales-actions {
+            white-space: normal;
+        }
+
+        .comerciales-actions form {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .comerciales-actions input {
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        tbody tr:hover {
+            background: #f5f8fa;
+        }
+    </style>
+</head>
+<body>
+    <main id="contenedora">
+        <div class="page-header">
+            <h1>Comerciales</h1>
+            <form action="/comerciales/crear">
+                <input type="submit" value="Crear">
+            </form>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido1</th>
+                        <th>Apellido2</th>
+                        <th>Comisión</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="comercial : ${comerciales}">
+                        <td th:text="${comercial.id}">0</td>
+                        <td th:text="${comercial.nombre}">nombre</td>
+                        <td th:text="${comercial.apellido1}">apellido1</td>
+                        <td th:text="${comercial.apellido2 ?: '-'}">apellido2</td>
+                        <td th:text="${comercial.comisión ?: '-'}">comisión</td>
+                        <td class="comerciales-actions">
+                            <form th:action="@{/comerciales/{id}(id=${comercial.id})}" method="post">
+                                <input type="submit" value="Ver Detalle">
+                            </form>
+                            <form th:action="@{/comerciales/editar/{id}(id=${comercial.id})}" method="get">
+                                <input type="submit" value="Editar">
+                            </form>
+                            <form th:action="@{/comerciales/borrar/{id}(id=${comercial.id})}" method="post">
+                                <input type="submit" value="Eliminar">
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>
