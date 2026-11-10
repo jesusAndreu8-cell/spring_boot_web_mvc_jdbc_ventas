@@ -3,7 +3,7 @@
 <head th:replace="~{fragments/layout :: head('Detalle del comercial')}"></head>
 <body>
     <nav th:replace="~{fragments/layout :: navbar}"></nav>
-    <main class="container py-4" style="max-width: 720px">
+    <main class="container py-4" style="max-width: 900px">
         <h1 class="h2 mb-4">Detalle del comercial</h1>
         <dl class="row">
             <dt class="col-sm-4">ID</dt><dd class="col-sm-8" th:text="${comercial.id}">0</dd>
@@ -12,6 +12,29 @@
             <dt class="col-sm-4">Apellido 2</dt><dd class="col-sm-8" th:text="${comercial.apellido2 ?: '-'}">apellido2</dd>
             <dt class="col-sm-4">Comisión</dt><dd class="col-sm-8" th:text="${comercial.comisión ?: '-'}">comisión</dd>
         </dl>
+
+        <h2 class="h4 mt-4">Pedidos del comercial</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>ID</th><th>Total</th><th>Fecha</th><th>Cliente</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="pedido : ${pedidos}">
+                    <td th:text="${pedido.id}">0</td>
+                    <td th:text="${pedido.total}">0.00</td>
+                    <td th:text="${pedido.fecha ?: '-'}">fecha</td>
+                    <td>
+                        <a th:href="@{/clientes/{id}(id=${pedido.clienteId})}"
+                           th:text="${pedido.clienteNombre}"
+                           target="_blank" rel="noopener">cliente</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pedidos)}">
+                    <td colspan="4" class="text-center text-muted">Este comercial no tiene pedidos.</td>
+                </tr>
+            </tbody>
+        </table>
+
         <a class="btn btn-outline-secondary" th:href="@{/comerciales}">Volver</a>
     </main>
 </body>

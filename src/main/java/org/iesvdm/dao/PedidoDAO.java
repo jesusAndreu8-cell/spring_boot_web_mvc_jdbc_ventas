@@ -17,6 +17,10 @@ public interface PedidoDAO {
 	public void update(Pedido pedido);
 	public void delete(int id);
 
+	// Pedidos de un comercial / de un cliente (con nombres) para las vistas de detalle
+	public List<PedidoDetalle> findByComercialId(int comercialId);
+	public List<PedidoDetalle> findByClienteId(int clienteId);
+
 	// Apoyo a los formularios: clientes y comerciales con nombre completo
 	public List<PersonaOpcion> getOpcionesClientes();
 	public List<PersonaOpcion> getOpcionesComerciales();

@@ -117,6 +117,22 @@ public class PedidoDAOImpl implements PedidoDAO {
 	}
 
 	/**
+	 * Devuelve los pedidos de un comercial (con nombres de cliente y comercial).
+	 */
+	@Override
+	public List<PedidoDetalle> findByComercialId(int comercialId) {
+		return jdbcTemplate.query(SELECT_DETALLE + " WHERE p.id_comercial = ? ORDER BY p.id", DETALLE_MAPPER, comercialId);
+	}
+
+	/**
+	 * Devuelve los pedidos de un cliente (con nombres de cliente y comercial).
+	 */
+	@Override
+	public List<PedidoDetalle> findByClienteId(int clienteId) {
+		return jdbcTemplate.query(SELECT_DETALLE + " WHERE p.id_cliente = ? ORDER BY p.id", DETALLE_MAPPER, clienteId);
+	}
+
+	/**
 	 * Actualiza Pedido con campos del bean según ID del mismo.
 	 */
 	@Override
