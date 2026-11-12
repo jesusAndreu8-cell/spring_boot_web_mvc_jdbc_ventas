@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.iesvdm.modelo.Pedido;
+import org.iesvdm.dto.ClienteTotalDTO;
 import org.iesvdm.modelo.PedidoDetalle;
 import org.iesvdm.modelo.PersonaOpcion;
 import org.springframework.stereotype.Repository;
@@ -20,6 +21,9 @@ public interface PedidoDAO {
 	// Pedidos de un comercial / de un cliente (con nombres) para las vistas de detalle
 	public List<PedidoDetalle> findByComercialId(int comercialId);
 	public List<PedidoDetalle> findByClienteId(int clienteId);
+
+	// Clientes con pedidos de ese comercial, con el total de TODOS sus pedidos, de mayor a menor
+	public List<ClienteTotalDTO> findClientesPorTotalByComercialId(int comercialId);
 
 	// Apoyo a los formularios: clientes y comerciales con nombre completo
 	public List<PersonaOpcion> getOpcionesClientes();

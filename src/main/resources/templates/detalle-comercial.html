@@ -13,13 +13,28 @@
             <dt class="col-sm-4">Comisión</dt><dd class="col-sm-8" th:text="${comercial.comisión ?: '-'}">comisión</dd>
         </dl>
 
+        <h2 class="h4 mt-4">Estadísticas de pedidos</h2>
+        <dl class="row">
+            <dt class="col-sm-4">Nº de pedidos</dt>
+            <dd class="col-sm-8" th:text="${stats.numPedidos}">0</dd>
+            <dt class="col-sm-4">Total de pedidos</dt>
+            <dd class="col-sm-8" th:text="${#numbers.formatDecimal(stats.total, 1, 'POINT', 2, 'COMMA')}">0,00</dd>
+            <dt class="col-sm-4">Media de pedidos</dt>
+            <dd class="col-sm-8" th:text="${#numbers.formatDecimal(stats.media, 1, 'POINT', 2, 'COMMA')}">0,00</dd>
+        </dl>
+
         <h2 class="h4 mt-4">Pedidos del comercial</h2>
-        <table class="table table-striped">
+        <p class="small" th:if="${stats.numPedidos > 0}">
+            <span class="badge text-bg-success">Verde</span> pedido de importe máximo
+            <span class="badge text-bg-warning ms-3">Amarillo</span> pedido de importe mínimo
+        </p>
+        <table class="table">
             <thead>
                 <tr><th>ID</th><th>Total</th><th>Fecha</th><th>Cliente</th></tr>
             </thead>
             <tbody>
-                <tr th:each="pedido : ${pedidos}">
+                <tr th:each="pedido : ${pedidos}"
+                    th:classappend="${pedido.total == stats.maximo} ? 'table-success' : (${pedido.total == stats.minimo} ? 'table-warning' : '')">
                     <td th:text="${pedido.id}">0</td>
                     <td th:text="${pedido.total}">0.00</td>
                     <td th:text="${pedido.fecha ?: '-'}">fecha</td>
@@ -31,6 +46,28 @@
                 </tr>
                 <tr th:if="${#lists.isEmpty(pedidos)}">
                     <td colspan="4" class="text-center text-muted">Este comercial no tiene pedidos.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="h4 mt-4">Clientes por total de pedidos</h2>
+        <p class="small text-muted">Clientes con pedidos de este comercial, ordenados de mayor a menor por el total de todos sus pedidos.</p>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>#</th><th>Cliente</th><th>Total de sus pedidos</th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="c, fila : ${clientesPorTotal}">
+                    <td th:text="${fila.count}">1</td>
+                    <td>
+                        <a th:href="@{/clientes/{id}(id=${c.clienteId})}"
+                           th:text="${c.clienteNombre}"
+                           target="_blank" rel="noopener">cliente</a>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(c.total, 1, 'POINT', 2, 'COMMA')}">0,00</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(clientesPorTotal)}">
+                    <td colspan="3" class="text-center text-muted">Este comercial no tiene clientes con pedidos.</td>
                 </tr>
             </tbody>
         </table>

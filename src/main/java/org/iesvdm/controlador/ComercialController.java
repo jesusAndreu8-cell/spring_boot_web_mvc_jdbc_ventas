@@ -35,7 +35,10 @@ public class ComercialController {
 		return comercialService.find(id)
 				.map(comercial -> {
 					model.addAttribute("comercial", comercial);
-					model.addAttribute("pedidos", comercialService.listPedidosByComercial(id));
+					var pedidos = comercialService.listPedidosByComercial(id);
+					model.addAttribute("pedidos", pedidos);
+					model.addAttribute("stats", comercialService.statsPedidos(pedidos));
+					model.addAttribute("clientesPorTotal", comercialService.listClientesPorTotal(id));
 					return "detalle-comercial";
 				})
 				.orElse("redirect:/comerciales");

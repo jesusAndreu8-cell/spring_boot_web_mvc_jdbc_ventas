@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.iesvdm.dto.ClienteTotalDTO;
 import org.iesvdm.modelo.Pedido;
 import org.iesvdm.modelo.PedidoDetalle;
 import org.iesvdm.modelo.PersonaOpcion;
@@ -130,6 +131,24 @@ public class PedidoDAOImpl implements PedidoDAO {
 	@Override
 	public List<PedidoDetalle> findByClienteId(int clienteId) {
 		return jdbcTemplate.query(SELECT_DETALLE + " WHERE p.id_cliente = ? ORDER BY p.id", DETALLE_MAPPER, clienteId);
+	}
+
+	/**
+	 * Clientes que tienen algún pedido con el comercial, ordenados de mayor a menor
+	 * por la suma del total de TODOS sus pedidos (con cualquier comercial).
+	 */
+	@Override
+	public List<ClienteTotalDTO> findClientesPorTotalByComercialId(int comercialId) {
+		return jdbcTemplate.query("""
+				SELECT c.id, CONCAT_WS(' ', c.nombre, c.apellido1, c.apellido2) AS cliente, SUM(p.total) AS total
+				FROM cliente c
+				JOIN pedido p ON p.id_cliente = c.id
+				WHERE c.id IN (SELECT id_cliente FROM pedido WHERE id_comercial = ?)
+				GROUP BY c.id, c.nombre, c.apellido1, c.apellido2
+				ORDER BY total DESC, c.id
+				""",
+				(rs, rowNum) -> new ClienteTotalDTO(rs.getInt("id"), rs.getString("cliente"), rs.getDouble("total")),
+				comercialId);
 	}
 
 	/**
