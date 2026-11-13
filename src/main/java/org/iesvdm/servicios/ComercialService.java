@@ -4,6 +4,7 @@ import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Optional;
 
+import org.iesvdm.dao.ClienteComercialDAO;
 import org.iesvdm.dao.ComercialDAO;
 import org.iesvdm.dao.PedidoDAO;
 import org.iesvdm.dto.ClienteTotalDTO;
@@ -11,16 +12,19 @@ import org.iesvdm.dto.PedidosStatsDTO;
 import org.iesvdm.modelo.Comercial;
 import org.iesvdm.modelo.PedidoDetalle;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ComercialService {
 
 	private final ComercialDAO comercialDAO;
 	private final PedidoDAO pedidoDAO;
+	private final ClienteComercialDAO clienteComercialDAO;
 
-	public ComercialService(ComercialDAO comercialDAO, PedidoDAO pedidoDAO) {
+	public ComercialService(ComercialDAO comercialDAO, PedidoDAO pedidoDAO, ClienteComercialDAO clienteComercialDAO) {
 		this.comercialDAO = comercialDAO;
 		this.pedidoDAO = pedidoDAO;
+		this.clienteComercialDAO = clienteComercialDAO;
 	}
 
 	public List<PedidoDetalle> listPedidosByComercial(int comercialId) {
@@ -59,7 +63,10 @@ public class ComercialService {
 		comercialDAO.update(comercial);
 	}
 
+	// Transaccional: si el comercial tiene pedidos el borrado falla y se deshace también el de sus vínculos
+	@Transactional
 	public void delete(int id) {
+		clienteComercialDAO.deleteByComercialId(id);
 		comercialDAO.delete(id);
 	}
 }

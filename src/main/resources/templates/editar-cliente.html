@@ -15,6 +15,52 @@
             <button class="btn btn-primary" type="submit">Guardar</button>
             <a class="btn btn-outline-secondary ms-2" th:href="@{/clientes}">Cancelar</a>
         </form>
+
+        <div class="alert alert-danger mt-4" th:if="${error}" th:text="${error}">Error</div>
+
+        <h2 class="h4 mt-5 mb-3">Añadir comercial al cliente</h2>
+        <form th:if="${!#lists.isEmpty(comerciales)}"
+              th:action="@{/clientes/editar/{id}/comerciales(id=${cliente.id})}" method="post">
+            <div class="mb-3">
+                <label class="form-label" for="comercialId">Comercial</label>
+                <select class="form-select" id="comercialId" name="comercialId" required>
+                    <option th:each="c : ${comerciales}" th:value="${c.id}"
+                            th:text="${c.nombre + ' ' + c.apellido1 + (c.apellido2 != null ? ' ' + c.apellido2 : '')}">Comercial</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="fecha">Fecha</label>
+                <input class="form-control" id="fecha" name="fecha" type="date" th:value="${hoy}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="prioridad">Prioridad</label>
+                <input class="form-control" id="prioridad" name="prioridad" type="number" min="1" value="1" required>
+            </div>
+            <button class="btn btn-primary" type="submit">Añadir comercial</button>
+        </form>
+        <p class="text-muted" th:if="${#lists.isEmpty(comerciales)}">No quedan comerciales por vincular a este cliente.</p>
+
+        <h2 class="h4 mt-5 mb-3">Comerciales del cliente</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>Comercial</th><th>Fecha</th><th>Prioridad</th><th></th></tr>
+            </thead>
+            <tbody>
+                <tr th:each="v : ${vinculados}">
+                    <td><a th:href="@{/comerciales/{id}(id=${v.comercialId})}" th:text="${v.comercialNombre}">comercial</a></td>
+                    <td th:text="${v.fechaAsociacion}">fecha</td>
+                    <td th:text="${v.prioridad}">1</td>
+                    <td class="text-end">
+                        <form th:action="@{/clientes/editar/{id}/comerciales/borrar/{cid}(id=${cliente.id},cid=${v.comercialId})}" method="post">
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Borrar</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(vinculados)}">
+                    <td colspan="4" class="text-center text-muted">Este cliente no tiene comerciales vinculados.</td>
+                </tr>
+            </tbody>
+        </table>
     </main>
 </body>
 </html>
